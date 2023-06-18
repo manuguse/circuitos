@@ -29,7 +29,7 @@ component decod is port (
 end component;
 
 component Controle is port (
-        clock,ctrl: in std_logic;
+        clock,ctrl, rst: in std_logic;
         sel: out std_logic_vector(1 downto 0));
 end component;
 
@@ -37,7 +37,7 @@ begin
 
 L1: datapath port map (entradaI, sel, CLK_1, KEY(0), Q_reg);
 L2: decod port map (Q_reg, Q_decod);
-L3: controle port map (CLK_1, SW(0), sel);
+L3: controle port map (CLK_1, SW(0), key(0),sel);
 
 entradaI <= "0001"; 
 ledr(3 downto 0)<= Q_reg;

@@ -2,7 +2,7 @@ library ieee;
 use ieee.std_logic_1164.all;
  
 entity Controle is port (
-clock,ctrl: in std_logic;
+clock,ctrl, rst: in std_logic;
 sel: out std_logic_vector(1 downto 0));
 end Controle;
 
@@ -11,63 +11,69 @@ architecture bhv of controle is
     signal EA, PE: STATES;
 
 
-begin
-    
+begin    
+
     P1: process(clock)
     begin
-    if (clock'event AND clock = '1') then
-        EA <= PE;
+        if rst = '0' then
+            EA <= E0;
+        else
+            if (clock'event AND clock = '1') then
+                EA <= PE;
+            end if;
         end if;
     end process;
     
-    P2: process(EA,ctrl)
+    P2: process(EA,ctrl, rst)
     begin
-        case EA is
 
-        when E0 => 
-            sel <= "00";
-            if ctrl ='1' then
-                PE <= E1;
-            elsif ctrl='0' then
-                PE <= E2;
-            end if;
+            case EA is
 
-        when E1 =>
-            sel <= "11";
-            if ctrl ='0' then
-                PE <= E0;
-            elsif ctrl='1' then
-                PE <= E1;
-            end if;
+            when E0 => 
+                sel <= "00";
+                if ctrl ='1' then
+                    PE <= E1;
+                elsif ctrl='0' then
+                    PE <= E2;
+                end if;
 
-        when E2 =>
-            sel <= "01";
-            if ctrl ='0' then
-                PE <= E3;
-            elsif ctrl='1' then
-                PE <= E0;
-            end if;
-        
-        when E3 => 
-            sel <= "01";
-            if ctrl ='0' then
-                PE <= E4;
-            elsif ctrl='1' then
-                PE <= E0;
-            end if;
+            when E1 =>
+                sel <= "11";
+                if ctrl ='0' then
+                    PE <= E0;
+                elsif ctrl='1' then
+                    PE <= E1;
+                end if;
 
-        when E4 => 
-            sel <= "01";
-            if ctrl ='0' then
-                PE <= E5;
-            elsif ctrl='1' then
-                PE <= E0;
-            end if;
+            when E2 =>
+                sel <= "01";
+                if ctrl ='0' then
+                    PE <= E3;
+                elsif ctrl='1' then
+                    PE <= E0;
+                end if;
             
-        when E5 => 
-            sel <= "01";
-            PE <= E0;
+            when E3 => 
+                sel <= "01";
+                if ctrl ='0' then
+                    PE <= E4;
+                elsif ctrl='1' then
+                    PE <= E0;
+                end if;
 
-        end case;
+            when E4 => 
+                sel <= "01";
+                if ctrl ='0' then
+                    PE <= E5;
+                elsif ctrl='1' then
+                    PE <= E0;
+                end if;
+                
+            when E5 => 
+                sel <= "01";
+                PE <= E0;
+
+            end case;
+
     end process;
 end bhv;
